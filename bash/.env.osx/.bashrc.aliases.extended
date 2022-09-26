@@ -1,0 +1,149 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+function mscp { # my scp
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            BOX=$1; shift;
+            IP="${ORG}"_"${BOX}"_ip
+            KEY="${ORG}"_"${BOX}"_key
+            if [[ ! -e ~/.ssh/${!KEY}.pem ]]; then
+                error "no key for specified box";
+                return 0;
+            fi
+
+            info "moving to ~/uploads/"
+            if (( "$#" )); then # move multiple files
+                while (( "$#" )); do
+                    FILEPATH=$1
+                    sudo scp -r -P 22 -i ~/.ssh/${!KEY}.pem $FILEPATH ubuntu@${!IP}:~/uploads/
+                    shift;
+                done
+            fi
+            ;;
+
+        md)
+            ggmd # first cd to mechanicdesk dir
+            if (( "$#" )); then # move multiple files
+                while (( "$#" )); do
+                    FILEPATH=$1
+                    bin/prod/scp_proxy $FILEPATH
+                    shift;
+                done
+            fi
+            ;;
+
+        *)
+            error "invalid org"
+            ;;
+    esac
+}
+
+
+function mssh { # my ssh
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            BOX=$1; shift;
+            IP="${ORG}"_"${BOX}"_ip
+            KEY="${ORG}"_"${BOX}"_key
+            if [[ ! -e ~/.ssh/${!KEY}.pem ]]; then
+                error "no key for specified box";
+                return 0;
+            fi
+            sudo ssh -A ubuntu@${!IP} -p 22 -i ~/.ssh/${!KEY}.pem
+            ;;
+
+        md)
+            ggmd # first cd to mechanicdesk dir
+            bin/prod/ssh_proxy
+            ;;
+
+        mdtest)
+            ggmd # first cd to mechanicdesk dir
+            bin/prod/ssh_test
+            ;;
+
+        *)
+            error "invalid org"
+            ;;
+    esac
+}
+
+
+function maws { # my aws cli
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            OP=$1; shift;
+            PROFILE="${ORG}"_aws_profile
+            case $OP in
+                ls)
+                    FORMAT='{ID: .InstanceId, Name: .KeyName, Type: .InstanceType, Status: .State.Name}'
+                    sudo aws ec2 describe-instances --profile ${!PROFILE} | jq \
+                        ".Reservations | map(.Instances) | map(.[0]) | map($FORMAT)"
+                    ;;
+
+                stop)
+                    BOX=$1; shift;
+                    [[ ! -n $BOX ]] && error 'noop for box' && return 0
+
+                    IP="${ORG}"_"${BOX}"_ip
+                    KEY="${ORG}"_"${BOX}"_key
+                    INSTANCE_ID="${ORG}"_"${BOX}"_instance_id
+                    sudo aws ec2 stop-instances --profile ${!PROFILE} --instance-ids ${!INSTANCE_ID}
+                    ;;
+
+                start)
+                    BOX=$1; shift;
+                    [[ ! -n $BOX ]] && error 'noop for box' && return 0
+
+                    IP="${ORG}"_"${BOX}"_ip
+                    KEY="${ORG}"_"${BOX}"_key
+                    INSTANCE_ID="${ORG}"_"${BOX}"_instance_id
+                    sudo aws ec2 start-instances --profile ${!PROFILE} --instance-ids ${!INSTANCE_ID}
+                    ;;
+
+                reboot)
+                    BOX=$1; shift;
+                    [[ ! -n $BOX ]] && error 'noop for box' && return 0
+
+                    IP="${ORG}"_"${BOX}"_ip
+                    KEY="${ORG}"_"${BOX}"_key
+                    INSTANCE_ID="${ORG}"_"${BOX}"_instance_id
+                    sudo aws ec2 reboot-instances --profile ${!PROFILE} --instance-ids ${!INSTANCE_ID}
+                    ;;
+
+                deploy)
+                    BOX=$1; shift;
+                    case $BOX in
+                        arthome_app_osa2_webportal)
+                            ggosa2w;
+                            aws s3 sync build/ s3://arthome-app-osa2-webportal-v3 \
+                                --acl public-read --profile ${!PROFILE};
+                            ;;
+
+                        ez-spreadsheet-webportal)
+                            ggezw;
+                            aws s3 sync out/ s3://ez-spreadsheet-webportal \
+                                --acl public-read --profile ${!PROFILE};
+                            ;;
+
+                        *)
+                            error 'invalid build target'
+                            ;;
+                    esac
+                    ;;
+
+                *)
+                    error 'noop for org'
+                    ;;
+            esac
+            ;;
+
+        *)
+            error "invalid org"
+            ;;
+    esac
+}

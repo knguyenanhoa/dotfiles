@@ -1,0 +1,56 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+export DEFAULTPS1=$PS1
+export RED="\033[31m"
+export GREEN="\033[32m"
+export BLUE="\033[34m"
+export CYAN="\033[36m"
+export YELLOW="\033[33m"
+GITSTATUS=""
+
+function get_env {
+    #primitive ruby version getter
+    [[ -e ./Gemfile ]] && echo $(ruby --version | cut -c-13) && return
+
+    PYENV="$(echo $VIRTUAL_ENV | grep -o '[a-zA-Z0-9_-]*$')"
+    [[ ! -z $PYENV ]] && echo "py $PYENV" && return
+
+    echo "_"
+}
+function up_time {
+    uptime | egrep -o up[^,]+
+}
+function git_stat {
+    BRANCHCOLOUR=${YELLOW}
+    BRANCH='_'
+    STATUS_ICON=""
+    if [[ -d ./.git/ ]]; then
+        STATUS=$(git status)
+        BRANCH=$(echo $STATUS | grep -o '^On branch [a-zA-Z0-9_/-]*' | cut -c 11-)
+        (( ${#BRANCH} > 20 )) && BRANCH="$(echo $BRANCH | cut -c 1-20)..."
+        CLEAN_GIT=$(echo $STATUS | grep -o 'nothing to commit')
+        STAGED_GIT=$(echo $STATUS | grep -o 'to be committed')
+        NEW_FILE_PRESENT=$(echo $STATUS | grep -o 'new file:')
+
+        if [[ ${BRANCH} != "master" ]]; then
+            BRANCHCOLOUR=${CYAN}
+        fi
+        if [[ ${CLEAN_GIT} ]]; then
+            STATUS_ICON="\[${GREEN}\]✓"
+        elif [[ ${STAGED_GIT} ]]; then
+            STATUS_ICON="\[${GREEN}\]STAGED"
+            if [[ ${NEW_FILE_PRESENT} ]]; then
+                STATUS_ICON="\[${YELLOW}\]STAGED!"
+            fi
+        else
+            STATUS_ICON="\[${RED}\]✗"
+        fi
+    fi
+    GITSTATUS="\[${BRANCHCOLOUR}\]⑂ ${BRANCH} ${STATUS_ICON}\[${BRANCHCOLOUR}\]"
+}
+function custom_prompt {
+    git_stat
+    export PS1="\[${RED}\]〈\$(up_time)|\[${BLUE}\]∴ \$(get_env) 〉\[${CYAN}\]〈\W ∇|${GITSTATUS}〉\[${CYAN}\]\[\e[m\]"
+}
+export PROMPT_COMMAND=custom_prompt

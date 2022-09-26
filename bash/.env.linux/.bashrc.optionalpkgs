@@ -1,0 +1,95 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+function installpkg {
+    # takes 3 args:
+    # 1. pkg name for install
+    # 2. arbitrary text
+    # 3. pkg name for which command
+    PKG=$1
+    [[ $3 ]] && PKG=$3
+    if [[ -z $(which $PKG) ]]; then
+        {
+            [[ $VERBOSE ]] && echo "[INFO] Installing $2 → $1";
+            if [[ $(uname | grep -i darwin) ]]; then
+                HOMEBREW_NO_AUTO_UPDATE=1 brew install $1;
+            else
+                sudo apt-get -y install $1;
+            fi
+        } || { [[ $VERBOSE ]] && echo "[ERROR] $1"; }
+    else
+        [[ $VERBOSE ]] && echo "[INFO] Using $1"
+    fi
+    unset PKG
+}
+
+[[ $VERBOSE && $INSTALL_OPTIONAL ]] && echo "[INFO] Checking optional pkgs"
+
+[[ $INSTALL_OPTIONAL ]] && installpkg cowsay "just for fun";
+[[ $INSTALL_OPTIONAL ]] && installpkg fortune "cowsay";
+[[ $INSTALL_OPTIONAL ]] && installpkg p7zip "zip" 7z;
+[[ $INSTALL_OPTIONAL ]] && installpkg tldr "man";
+[[ $INSTALL_OPTIONAL ]] && installpkg howdoi "man";
+[[ $INSTALL_OPTIONAL ]] && installpkg borg "backup";
+
+[[ $INSTALL_OPTIONAL ]] && installpkg fzf "find, locate";
+if [[ -s $(which fzf) ]]; then
+    # setup fzf
+    if [[ ! "$PATH" == */usr/local/opt/fzf/bin* ]]; then
+        export PATH="${PATH:+${PATH}:}/usr/local/opt/fzf/bin"
+    fi
+    if [[ $- == *i* ]]; then
+        source "/usr/local/opt/fzf/shell/completion.bash" 2> /dev/null
+    fi
+    source "/usr/local/opt/fzf/shell/key-bindings.bash"
+
+    FZF_OPTIONS='--height=33% --border --reverse --info=inline'
+    export FZF_DEFAULT_OPTS=$FZF_OPTIONS
+    export FZF_COMPLETION_TRIGGER=".."
+    export FZF_COMPLETION_OPTS=$FZF_OPTIONS
+fi
+
+[[ $INSTALL_OPTIONAL ]] && installpkg fpp "facebook path picker";
+[[ $INSTALL_OPTIONAL ]] && installpkg htop "ps";
+[[ $INSTALL_OPTIONAL ]] && installpkg tig "git log";
+
+if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which espanso) ]]; then
+    {
+        [[ $VERBOSE ]] && echo "[INFO] Installing espanso";
+        if [[ $(uname | grep -i darwin) ]]; then
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap federico-terzi/espanso;
+            brew install espanso;
+        else
+            sudo apt-get -y install espanso
+        fi
+        espanso register && espanso start && espanso --version;
+    } || { [[ $VERBOSE ]] && echo "[ERROR] espanso"; }
+else
+    [[ $VERBOSE ]] && echo "[INFO] Using espanso"
+fi
+
+if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which aws) ]]; then
+    {
+        [[ $VERBOSE ]] && echo "[INFO] Installing aws cli v2";
+        cd;
+        curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg";
+        sudo installer -pkg AWSCLIV2.pkg -target /;
+        sudo rm -f "AWSCLIV2.pkg"
+        cd -;
+    } || { [[ $VERBOSE ]] && echo "[ERROR] aws cli v2"; }
+else
+    [[ $VERBOSE ]] && echo "[INFO] Using aws cli v2"
+fi
+
+if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which b2) ]]; then
+    {
+        [[ $VERBOSE ]] && echo "[INFO] Installing b2 cli (backblaze)";
+        cd;
+        pip install --upgrade b2;
+        cd -;
+    } || { [[ $VERBOSE ]] && echo "[ERROR] b2 cli (backblaze)"; }
+else
+    [[ $VERBOSE ]] && echo "[INFO] Using b2 cli (backblaze)"
+fi
+
+[[ $VERBOSE ]] && echo '[INFO] Done'

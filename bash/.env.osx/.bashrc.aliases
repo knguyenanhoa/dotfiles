@@ -1,0 +1,121 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+
+# >>>>>> GENERAL
+# general aliases
+
+alias la='ls -lhaFGS'
+alias tag='ctags -R .'
+alias p3='python3'
+alias lisp='sbcl'
+alias rs='Rscript'
+alias ber='bundle exec rake'
+function dbm {
+    info "migrate development"
+    RAILS_ENV=development bundle exec rake db:migrate
+    info "migrate test"
+    RAILS_ENV=test bundle exec rake db:migrate
+}
+
+alias cov='open coverage/index.html'
+
+# tmux
+alias tl="tmux ls"
+alias ta="tmux attach"
+alias tn="tmux new"
+
+# git
+alias gs='git status'
+__git_complete gs _git_status
+alias gl='tig --all'
+__git_complete gl _git_log
+alias gad='git add'
+alias gbr='git branch'
+__git_complete gbr _git_branch
+alias gcm='git commit'
+alias gck='git checkout'
+__git_complete gck _git_checkout
+##### reduces clashes and merges
+alias gpl='git add .; git stash; git pull;'
+alias gps='git push'
+alias gst='git stash'
+__git_complete gst _git_stash
+alias gmr='git merge'
+__git_complete gmr _git_merge
+alias gdf='git difftool'
+__git_complete gdf _git_difftool
+alias grs='git reset'
+alias pop='git stash pop'
+
+
+# >>>>>> NAV
+# nav aliases should prefix with gg → less likely to clash with git aliases
+# nav aliases that directly open files should start with oo → less likely to clash
+
+# md
+alias ggmd='cd /Volumes/untitled/mechanicdesk/mechanicdesk/'
+alias ggmdl='cd /Volumes/untitled/mechanicdesk/mechanicdesk-gateway/' # mdlook
+alias ggmdw='cd /Volumes/untitled/mechanicdesk/mdweb/' # mdweb
+
+# arthomeapp
+alias ggosaqc='cd ~/WORKREPO/arthome-app-backend'
+alias ggqcw='cd ~/WORKREPO/arthome-app-qc-webportal'
+alias ggosaw='cd ~/WORKREPO/arthome-app-osa-webportal'
+alias ggqcm='cd ~/WORKREPO/arthome-app-qc-mobile'
+alias ggosam='cd ~/WORKREPO/arthome-app-osa-mobile'
+alias ggosa2='cd ~/WORKREPO/arthome-app-osa2-backend'
+alias ggosa2rs='cd ~/WORKREPO/arthome-app-osa2-reporting-service'
+alias ggosa2m='cd ~/WORKREPO/arthome-app-osa2-mobile'
+alias ggosa2w='cd ~/WORKREPO/arthome-app-osa2-webportal'
+
+# ez spreadsheet
+alias ggez='cd ~/WORKREPO/ez-spreadsheet-backend'
+alias ggezw='cd ~/WORKREPO/ez-spreadsheet-webportal'
+
+# other
+alias geek='cat ~/id/repos/code.geek'
+alias ggwiki='cd ~/id/repos/.vimwiki/; vi index.wiki'
+alias ggtodo='cd ~/id/repos/.vimwiki/; vi .todo.wiki'
+alias ggmlai='cd ~/id/repos/l-mlai/'
+alias ggblog='cd ~/id/repos/w-blog/; vi'
+
+# file shortcuts
+alias ooas='open ~/id/assets/finances/assets-summary.xlsx'
+alias ooah='open ~/id/work/apphatch/management.xlsx'
+
+
+# >>>>>> MISC
+# service start shortcuts, misc scripts
+
+# backup data
+alias create_local_backup=create_borg_backup
+alias sync_backup_to_cloud="b2 sync /Volumes/MASTER/backup/ b2://backup-id-us/"
+
+# resque
+function resquestart {
+    QUEUES=customer_balances,supplier_balances,customer_statements,export,booking_reminder,follow_ups,accountings,marketings,email,customer_communications,solr;
+    ( QUEUE=$QUEUES rake resque:work > /dev/null 2>&1 ) & echo $! > $HOME/resque.pid
+}
+function resquestop {
+    sudo kill -9 $(cat $HOME/resque.pid) & rm $HOME/resque.pid; unset QUEUES
+}
+
+# md unicorn
+function mdstart {
+    sudo pfctl -evf redirect.conf
+    ( bundle exec unicorn -c config/unicorn.conf > /dev/null 2>&1 ) & echo $! > $HOME/md.pid
+}
+function mdstop {
+    sudo kill -9 $(cat $HOME/md.pid) & rm $HOME/md.pid
+}
+
+# postgres when it doesn't autostart
+alias pgstart='pg_ctl -D /usr/local/var/postgresql\@9.5/ start'
+alias pgrestart='pg_ctl -D /usr/local/var/postgresql\@9.5/ restart'
+
+# redis
+alias redisstart="( redis-server > /dev/null 2>&1 ) & echo $! > $HOME/redis.pid"
+function redisstop {
+    sudo kill -9 $(cat $HOME/redis.pid) & rm $HOME/redis.pid
+}

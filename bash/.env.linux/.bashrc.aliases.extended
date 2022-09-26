@@ -1,0 +1,110 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+function mscp { # my scp
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            BOX=$1; shift;
+            IP=id_"${BOX}"_ip
+            KEY=id_"${BOX}"_key
+            if [[ ! -e ~/.ssh/${!KEY}.pem ]]; then
+                echo "[ERROR] no key for specified box";
+                return 0;
+            fi
+
+            FILE_PATH=$1; shift;
+            echo "[INFO] moving to ~/uploads/"
+            sudo scp -r -P 22 -i ~/.ssh/${!KEY}.pem $FILE_PATH ubuntu@${!IP}:~/uploads/
+            ;;
+
+        md)
+            ggmd # first cd to mechanicdesk dir
+            WSID=$1; shift;
+            if (( "$#" )); then # move specified extensions
+                while (( "$#" )); do
+                    bin/prod/scp_proxy ~/Downloads/$WSID\_$1.xlsx;
+                    shift;
+                done
+            else
+                [[ ! $WSID ]] && echo '[ERROR] specify a workshop id' && return 0
+                FILES="$(ls ~/Downloads/ | grep $WSID)"
+                for FILE in $FILES; do
+                    bin/prod/scp_proxy ~/Downloads/$FILE;
+                done
+            fi
+            unset WSID
+            ;;
+
+        *)
+            echo "[ERROR] invalid org"
+            ;;
+    esac
+}
+
+
+function mssh { # my ssh
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            BOX=$1; shift;
+            IP="${ORG}"_"${BOX}"_ip
+            KEY="${ORG}"_"${BOX}"_key
+            if [[ ! -e ~/.ssh/${!KEY}.pem ]]; then
+                echo "[ERROR] no key for specified box"
+            else
+                sudo ssh -A ubuntu@${!IP} -p 22 -i ~/.ssh/${!KEY}.pem
+            fi
+            ;;
+
+        md)
+            ggmd # first cd to mechanicdesk dir
+            bin/prod/ssh_proxy
+            ;;
+
+        mdtest)
+            ggmd # first cd to mechanicdesk dir
+            bin/prod/ssh_test
+            ;;
+
+        *)
+            echo "[ERROR] invalid org"
+            ;;
+    esac
+}
+
+
+function maws { # my aws cli
+    ORG=$1; shift;
+    case $ORG in
+        id | apphatch)
+            OP=$1; shift;
+            PROFILE="${ORG}"_aws_profile
+            case $OP in
+                ls)
+                    FORMAT='{ID: .InstanceId, Name: .KeyName, Type: .InstanceType, Status: .State.Name}'
+                    sudo aws ec2 describe-instances --profile ${!PROFILE} | jq \
+                        ".Reservations | map(.Instances) | map(.[0]) | map($FORMAT)"
+                    ;;
+                reboot)
+                    BOX=$1; shift;
+                    [[ ! -n $BOX ]] && echo '[WARN] noop for box' && return 0
+
+                    IP="${ORG}"_"${BOX}"_ip
+                    KEY="${ORG}"_"${BOX}"_key
+                    INSTANCE_ID=id_"${BOX}"_instance_id
+
+                    sudo aws ec2 reboot-instances --profile ${!PROFILE} --instance-ids ${!INSTANCE_ID}
+                    ;;
+
+                *)
+                    echo '[WARN] noop for org'
+                    ;;
+            esac
+            ;;
+
+        *)
+            echo "[ERROR] what org is this?"
+            ;;
+    esac
+}

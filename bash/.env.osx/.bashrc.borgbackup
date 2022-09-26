@@ -1,0 +1,43 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+# script to create borg archives
+
+function create_borg_backup {
+    BACKUP_DIR="/Volumes/MASTER/backup"
+
+    if [[ -e $BACKUP_DIR/ ]]; then
+        info "creating backup at $BACKUP_DIR/::$(hostname)-$(date +%Y%m%d)"
+        borg create \
+            --compression zstd,10 \
+            --verbose \
+            --list \
+            --filter AME \
+            --stats \
+            --exclude-caches \
+                            \
+            $BACKUP_DIR/::"$(hostname)-$(date +%Y%m%d)" \
+                                                        \
+            $BACKUP_DIR/MEDIA/ \
+            $BACKUP_DIR/bui-ta-ba/ \
+            $BACKUP_DIR/klinkesorn-nguyen-anh-quan/ \
+            $BACKUP_DIR/nguyen-ha-quyen/ \
+            $BACKUP_DIR/trinh-al/ \
+            $BACKUP_DIR/bui-thi-kim-trang/ \
+            $BACKUP_DIR/luu-thi-thanh-xuan/ \
+            $BACKUP_DIR/nguyen-thi-mai-oanh/ \
+            $BACKUP_DIR/id/ \
+            $BACKUP_DIR/maisie-tran/ \
+            $BACKUP_DIR/tran-quoc-vinh/
+
+        info 'pruning directory'
+        borg prune \
+            --list \
+            --prefix "$(hostname)-" \
+            --keep-daily 7
+            --keep-weekly 4
+            --keep-monthly 6
+
+        info 'compacting repository'
+        borg compact
+    fi
+}
