@@ -83,19 +83,6 @@ let g:vimwiki_list = [{'path': '~/id/repos/.vimwiki/',
       \ }]
 let g:vimwiki_listsyms = ' =<✗✓'
 cnoremap wbl VimwikiBacklinks<cr>
-cnoremap wta call Vimwikisearchtags()<cr>
-function Vimwikisearchtags()
-  let query = input('VimwikiSearchTags ')
-  exe "VimwikiSearchTags ". query
-  lopen
-endfunction
-
-cnoremap wf call Vimwikisearch()<cr>
-function Vimwikisearch()
-  let query = input('VimwikiSearch ')
-  exe "VimwikiSearch ". query
-  lopen
-endfunction
 
 " Vim Rainbow
 " enable for all filetypes except vimwiki (interferes with link hiding

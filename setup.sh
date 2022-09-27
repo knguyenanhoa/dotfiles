@@ -13,6 +13,7 @@ mkdir -p ${HOME}/$ENV_DIR
 echo "- manually create .bashrc.local as required"
 ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases ${HOME}/$ENV_DIR/.bashrc.aliases
 ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases.extended ${HOME}/$ENV_DIR/.bashrc.aliases.extended
+ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases.ruby. ${HOME}/$ENV_DIR/.bashrc.aliases.ruby.
 ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.optionalpkgs ${HOME}/$ENV_DIR/.bashrc.optionalpkgs
 ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.pkgs ${HOME}/$ENV_DIR/.bashrc.pkgs
 ln -s ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.prompt ${HOME}/$ENV_DIR/.bashrc.prompt

@@ -30,7 +30,7 @@ function installpkg {
 [[ $INSTALL_OPTIONAL ]] && installpkg p7zip "zip" 7z;
 [[ $INSTALL_OPTIONAL ]] && installpkg tldr "man";
 [[ $INSTALL_OPTIONAL ]] && installpkg howdoi "man";
-[[ $INSTALL_OPTIONAL ]] && installpkg borg "backup";
+[[ $INSTALL_OPTIONAL ]] && installpkg borgbackup "backup";
 
 [[ $INSTALL_OPTIONAL ]] && installpkg fzf "find, locate";
 if [[ -s $(which fzf) ]]; then

@@ -1,9 +1,10 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 # script to create borg archives
+# currently not working (borg version clash)
 
-function create_borg_backup {
-    BACKUP_DIR="/Volumes/MASTER/backup"
+function backup_local {
+    BACKUP_DIR="${HOME}/$(hostname).backup"
 
     if [[ -e $BACKUP_DIR/ ]]; then
         info "creating backup at $BACKUP_DIR/::$(hostname)-$(date +%Y%m%d)"
@@ -14,30 +15,31 @@ function create_borg_backup {
             --filter AME \
             --stats \
             --exclude-caches \
-                            \
+            --exclude '*/.DS_Store' \
+            --exclude '*/.localized' \
+                                \
             $BACKUP_DIR/::"$(hostname)-$(date +%Y%m%d)" \
                                                         \
-            $BACKUP_DIR/MEDIA/ \
-            $BACKUP_DIR/bui-ta-ba/ \
-            $BACKUP_DIR/klinkesorn-nguyen-anh-quan/ \
-            $BACKUP_DIR/nguyen-ha-quyen/ \
-            $BACKUP_DIR/trinh-al/ \
-            $BACKUP_DIR/bui-thi-kim-trang/ \
-            $BACKUP_DIR/luu-thi-thanh-xuan/ \
-            $BACKUP_DIR/nguyen-thi-mai-oanh/ \
-            $BACKUP_DIR/id/ \
-            $BACKUP_DIR/maisie-tran/ \
-            $BACKUP_DIR/tran-quoc-vinh/
+            ${HOME}/id/ \
+            ${HOME}/Downloads/ \
+            ${HOME}/Desktop/
 
         info 'pruning directory'
         borg prune \
             --list \
             --prefix "$(hostname)-" \
-            --keep-daily 7
-            --keep-weekly 4
-            --keep-monthly 6
+            --keep-daily 7 \
+            --keep-weekly 4 \
+            --keep-monthly 6 \
+                             \
+            $BACKUP_DIR
 
         info 'compacting repository'
-        borg compact
+        borg compact \
+            $BACKUP_DIR
+    else
+        warn "backup directory not found, aborted"
     fi
+
+    unset BACKUP_DIR
 }

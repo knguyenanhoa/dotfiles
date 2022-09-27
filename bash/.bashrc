@@ -8,9 +8,9 @@ export BLUE="\033[34m"
 export CYAN="\033[36m"
 export YELLOW="\033[33m"
 
-info() { printf "\n${GREEN}%s${NOCOLOR} %s %s\n\n" "[INFO]" "$(date +%H:%M) --" "$*" >&2; }
-warn() { printf "\n${YELLOW}%s${NOCOLOR} %s %s\n\n" "[WARN]" "$(date +%H:%M) --" "$*" >&2; }
-error() { printf "\n${RED}%s${NOCOLOR} %s %s\n\n" "[ERROR]" "$(date +%H:%M) --" "$*" >&2; }
+info() { printf "\n${GREEN}%s${NOCOLOR} %s %s\n" "[INFO]" "$(date +%H:%M) --" "$*" >&2; }
+warn() { printf "\n${YELLOW}%s${NOCOLOR} %s %s\n" "[WARN]" "$(date +%H:%M) --" "$*" >&2; }
+error() { printf "\n${RED}%s${NOCOLOR} %s %s\n" "[ERROR]" "$(date +%H:%M) --" "$*" >&2; }
 
 while (( "$#" )); do
     case $1 in
@@ -73,16 +73,16 @@ function test_and_source {
 }
 
 test_and_source .git-completion.bash; # must be first
+
 test_and_source .bashrc.pkgs;
 test_and_source .bashrc.optionalpkgs;
 test_and_source .bashrc.aliases;
 test_and_source .bashrc.aliases.extended;
+test_and_source .bashrc.aliases.ruby.;
 test_and_source .bashrc.prompt;
-
-# load remote service access points and keys
 test_and_source .bashrc.remoteservices;
-# source misc scripts
 test_and_source .bashrc.borgbackup;
+
 # must source last, overrides default settings for local machine
 test_and_source .bashrc.local;
 
