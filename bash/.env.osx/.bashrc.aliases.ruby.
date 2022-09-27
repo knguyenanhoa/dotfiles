@@ -1,0 +1,69 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+# description: this contains helpers for ruby/rails related projects
+
+alias ber='bundle exec rake'
+function dbm {
+    info "Migrate development";
+    RAILS_ENV=development bundle exec rake db:migrate;
+    info "Migrate test";
+    RAILS_ENV=test bundle exec rake db:migrate;
+}
+function cov {
+    if [[ ! -e 'coverage/index.html' ]]; then
+        error "no coverage file present";
+        return 0;
+    fi
+    open 'coverage/index.html';
+}
+
+# md unicorn server
+function mdstart {
+    sudo pfctl -evf redirect.conf;
+    (
+        bundle exec unicorn -c config/unicorn.conf > /dev/null 2>&1;
+    ) & echo $! > $HOME/md.pid;
+}
+function mdstop {
+    sudo kill -9 $(cat $HOME/md.pid) & rm $HOME/md.pid;
+}
+
+function redisstart {
+    ( redis-server > /dev/null 2>&1 ) & echo $! > $HOME/redis.pid;
+}
+function redisstop {
+    sudo kill -9 $(cat $HOME/redis.pid) & rm $HOME/redis.pid;
+}
+
+function resquestart {
+    QUEUES=customer_balances,supplier_balances,customer_statements,export,booking_reminder,follow_ups,accountings,marketings,email,customer_communications,solr;
+    ( QUEUE=$QUEUES rake resque:work > /dev/null 2>&1 ) & echo $! > $HOME/resque.pid;
+}
+function resquestop {
+    sudo kill -9 $(cat $HOME/resque.pid) & rm $HOME/resque.pid; unset QUEUES;
+}
+
+
+# >>>>>> NAV
+# nav aliases should prefix with gg → less likely to clash with git aliases
+# nav aliases that directly open files should start with oo → less likely to clash
+
+# md
+alias ggmd='cd /Volumes/untitled/mechanicdesk/mechanicdesk/'
+alias ggmdl='cd /Volumes/untitled/mechanicdesk/mechanicdesk-gateway/' # mdlook
+alias ggmdw='cd /Volumes/untitled/mechanicdesk/mdweb/' # mdweb
+
+# arthomeapp
+alias ggosaqc='cd ~/WORKREPO/arthome-app-backend'
+alias ggqcw='cd ~/WORKREPO/arthome-app-qc-webportal'
+alias ggosaw='cd ~/WORKREPO/arthome-app-osa-webportal'
+alias ggqcm='cd ~/WORKREPO/arthome-app-qc-mobile'
+alias ggosam='cd ~/WORKREPO/arthome-app-osa-mobile'
+alias ggosa2='cd ~/WORKREPO/arthome-app-osa2-backend'
+alias ggosa2rs='cd ~/WORKREPO/arthome-app-osa2-reporting-service'
+alias ggosa2m='cd ~/WORKREPO/arthome-app-osa2-mobile'
+alias ggosa2w='cd ~/WORKREPO/arthome-app-osa2-webportal'
+
+# ez spreadsheet
+alias ggez='cd ~/WORKREPO/ez-spreadsheet-backend'
+alias ggezw='cd ~/WORKREPO/ez-spreadsheet-webportal'
