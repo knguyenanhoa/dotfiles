@@ -10,12 +10,6 @@ alias tag='ctags -R .'
 alias p3='python3'
 alias lisp='sbcl'
 alias rs='Rscript'
-function cd {
-    # auto activate python venv
-    builtin cd $1;
-    [[ -e bin/activate ]] && source bin/activate && return 0;
-    [[ ! -z $VIRTUAL_ENV ]] && deactivate;
-}
 
 # tmux
 alias tl="tmux ls"

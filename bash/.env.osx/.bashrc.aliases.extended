@@ -1,6 +1,13 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 
+function cd { # override builtin cd
+    # auto activate python venv
+    builtin cd $1;
+    [[ -e bin/activate ]] && source bin/activate && return 0;
+    [[ ! -z $VIRTUAL_ENV ]] && deactivate;
+}
+
 function mscp { # my scp
     ORG=$1; shift;
     case $ORG in
