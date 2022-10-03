@@ -3,8 +3,59 @@
 # script to create borg archives
 # currently not working (borg version clash)
 
-function backup_local {
-    BACKUP_DIR="${HOME}/$(hostname).backup"
+function _backup_external_drive {
+    BACKUP_DIR="/Volumes/$1/$1.backup"
+
+    if [[ -e $BACKUP_DIR/ ]]; then
+        info "creating backup at $BACKUP_DIR/::$1-$(date +%Y%m%d)"
+        borg create \
+            --compression zstd,10 \
+            --verbose \
+            --list \
+            --filter AME \
+            --stats \
+            --exclude-caches \
+            --exclude '*/.DS_Store' \
+            --exclude '*/.localized' \
+                                \
+            $BACKUP_DIR/::"$1-$(date +%Y%m%d)" \
+                                                        \
+            ${HOME}/MEDIA/ \
+            ${HOME}/id/ \
+            ${HOME}/bui-thi-kim-trang/ \
+            ${HOME}/klinkesorn-nguyen-anh-quan/ \
+            ${HOME}/nguyen-thi-mai-oanh/ \
+            ${HOME}/nguyen-ha-quyen/ \
+            ${HOME}/tran-quoc-vinh/ \
+            ${HOME}/maisie-tran/ \
+            ${HOME}/trinh-al/ \
+            ${HOME}/README.txt
+
+        info 'pruning directory'
+        borg prune \
+            --list \
+            --glob-archives "$1-*" \
+            --keep-daily 7 \
+            --keep-weekly 4 \
+            --keep-monthly 6 \
+                             \
+            $BACKUP_DIR
+
+        info 'compacting repository'
+        borg compact \
+            $BACKUP_DIR
+    else
+        warn "backup dir $BACKUP_DIR not found, aborted"
+        echo "1. backup repo may not be initialized"
+        echo "2. or the external drive is missing"
+        echo "3. or the external drive has the incorrect name"
+    fi
+
+    unset BACKUP_DIR
+}
+
+function _backup_essentials {
+    BACKUP_DIR="${HOME}/backups/$(hostname).backup.essentials"
 
     if [[ -e $BACKUP_DIR/ ]]; then
         info "creating backup at $BACKUP_DIR/::$(hostname)-$(date +%Y%m%d)"
@@ -27,7 +78,7 @@ function backup_local {
         info 'pruning directory'
         borg prune \
             --list \
-            --prefix "$(hostname)-" \
+            --glob-archives "$(hostname)-*" \
             --keep-daily 7 \
             --keep-weekly 4 \
             --keep-monthly 6 \
@@ -38,8 +89,31 @@ function backup_local {
         borg compact \
             $BACKUP_DIR
     else
-        warn "backup directory not found, aborted"
+        warn "backup dir $BACKUP_DIR not found, aborted"
+        echo "repo may not be initialized"
     fi
 
     unset BACKUP_DIR
+}
+
+function _sync_backups_to_b2 {
+    info 'backing up to b2 servers';
+    b2 sync ~/backups/ b2://backup-id-us/;
+}
+
+function backup {
+    # backups will be hostname dependent ⇒ different devices will likely have
+    # different backups (always check for clashes when adding new device)
+
+    # backs up external drive ext1
+    # should only plug into the new mac, with borg 1.2
+    _backup_external_drive "ext1"
+    # backs up external drive ext2 (pending purchase haha)
+    # should only plug into the new mac, with borg 1.2
+    _backup_external_drive "ext2"
+
+    # backup working directories
+    _backup_essentials;
+    # send everything to b2 cloud
+    _sync_backups_to_b2;
 }

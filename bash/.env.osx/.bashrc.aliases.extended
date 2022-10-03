@@ -1,6 +1,20 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 
+function cd { # override builtin cd
+    # auto activate python venv
+    builtin cd $1;
+    if [[ -e bin/activate ]]; then
+        TOP_LEVEL_ENV_DIR=$PWD && source bin/activate && return 0;
+    fi
+    if [[ ! $PWD/ = $TOP_LEVEL_ENV_DIR/* ]]; then
+        # subdirs should retain venv
+        # note: won't work if current dir is symlinked
+        # https://unix.stackexchange.com/questions/6435/how-to-check-if-pwd-is-a-subdirectory-of-a-given-path
+        [[ ! -z $VIRTUAL_ENV ]] && deactivate && unset TOP_LEVEL_ENV_DIR;
+    fi
+}
+
 function mscp { # my scp
     ORG=$1; shift;
     case $ORG in

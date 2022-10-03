@@ -25,14 +25,14 @@ function mdstart {
     ) & echo $! > $HOME/md.pid;
 }
 function mdstop {
-    sudo kill -9 $(cat $HOME/md.pid) & rm $HOME/md.pid;
+    sudo kill -QUIT $(cat $HOME/md.pid) && rm $HOME/md.pid;
 }
 
 function redisstart {
     ( redis-server > /dev/null 2>&1 ) & echo $! > $HOME/redis.pid;
 }
 function redisstop {
-    sudo kill -9 $(cat $HOME/redis.pid) & rm $HOME/redis.pid;
+    sudo kill -9 $(cat $HOME/redis.pid) && rm $HOME/redis.pid;
 }
 
 function resquestart {
@@ -40,7 +40,7 @@ function resquestart {
     ( QUEUE=$QUEUES rake resque:work > /dev/null 2>&1 ) & echo $! > $HOME/resque.pid;
 }
 function resquestop {
-    sudo kill -9 $(cat $HOME/resque.pid) & rm $HOME/resque.pid; unset QUEUES;
+    sudo kill -9 $(cat $HOME/resque.pid) && rm $HOME/resque.pid; unset QUEUES;
 }
 
 

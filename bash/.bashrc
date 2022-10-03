@@ -77,8 +77,8 @@ test_and_source .git-completion.bash; # must be first
 test_and_source .bashrc.pkgs;
 test_and_source .bashrc.optionalpkgs;
 test_and_source .bashrc.aliases;
-test_and_source .bashrc.aliases.extended;
 test_and_source .bashrc.aliases.ruby.;
+test_and_source .bashrc.aliases.extended;
 test_and_source .bashrc.prompt;
 test_and_source .bashrc.remoteservices;
 test_and_source .bashrc.borgbackup;

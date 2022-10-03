@@ -10,17 +10,18 @@ alias tag='ctags -R .'
 alias p3='python3'
 alias lisp='sbcl'
 alias rs='Rscript'
-function cd {
-    # auto activate python venv
-    builtin cd $1;
-    [[ -e bin/activate ]] && source bin/activate && return 0;
-    [[ ! -z $VIRTUAL_ENV ]] && deactivate;
-}
 
 # tmux
-alias tl="tmux ls"
-alias ta="tmux attach"
-alias tn="tmux new"
+alias tml="tmux ls"
+function tma {
+    tmux attach-session -t $1;
+}
+function tmn {
+    tmux new -s $1;
+}
+function tmk {
+    tmux kill-session -t $1;
+}
 
 # git
 alias gs='git status'
@@ -63,8 +64,6 @@ alias ooah='open ~/id/work/apphatch/management.xlsx'
 
 # >>>>>> MISC
 # misc scripts
-
-alias sync_backup_to_cloud="b2 sync ~/$(hostname).backup/ b2://backup-id-us/"
 
 # postgres when it doesn't autostart
 alias pgstart='pg_ctl -D /usr/local/var/postgresql\@9.5/ start'
