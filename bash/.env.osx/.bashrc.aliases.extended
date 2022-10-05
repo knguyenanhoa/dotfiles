@@ -15,6 +15,10 @@ function cd { # override builtin cd
     fi
 }
 
+function ff {
+    ag $1 $2 | fzf;
+}
+
 function mscp { # my scp
     ORG=$1; shift;
     case $ORG in

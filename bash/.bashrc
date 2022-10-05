@@ -8,9 +8,9 @@ export BLUE="\033[34m"
 export CYAN="\033[36m"
 export YELLOW="\033[33m"
 
-info() { printf "\n${GREEN}%s${NOCOLOR} %s %s\n" "[INFO]" "$(date +%H:%M) --" "$*" >&2; }
-warn() { printf "\n${YELLOW}%s${NOCOLOR} %s %s\n" "[WARN]" "$(date +%H:%M) --" "$*" >&2; }
-error() { printf "\n${RED}%s${NOCOLOR} %s %s\n" "[ERROR]" "$(date +%H:%M) --" "$*" >&2; }
+info() { printf "${GREEN}%s${NOCOLOR} %s %s\n" "[INFO]" "$(date +%H:%M) --" "$*" >&2; }
+warn() { printf "${YELLOW}%s${NOCOLOR} %s %s\n" "[WARN]" "$(date +%H:%M) --" "$*" >&2; }
+error() { printf "${RED}%s${NOCOLOR} %s %s\n" "[ERROR]" "$(date +%H:%M) --" "$*" >&2; }
 
 while (( "$#" )); do
     case $1 in

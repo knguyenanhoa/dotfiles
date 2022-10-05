@@ -13,15 +13,9 @@ alias rs='Rscript'
 
 # tmux
 alias tml="tmux ls"
-function tma {
-    tmux attach-session -t $1;
-}
-function tmn {
-    tmux new -s $1;
-}
-function tmk {
-    tmux kill-session -t $1;
-}
+function tma { tmux attach-session -t $1; }
+function tmn { tmux new -s $1; }
+function tmk { tmux kill-session -t $1; }
 
 # git
 alias gs='git status'
@@ -50,6 +44,7 @@ alias pop='git stash pop'
 # >>>>>> NAV
 # nav aliases should prefix with gg → less likely to clash with git aliases
 # nav aliases that directly open files should start with oo → less likely to clash
+# scaffolding aliases should start with mk (it is making something)
 
 # other
 alias geek='cat ~/id/repos/code.geek'
@@ -59,7 +54,7 @@ alias ggblog='cd ~/id/repos/w-blog/; vi'
 
 # file shortcuts
 alias ooas='open ~/id/assets/finances/assets-summary.xlsx'
-alias ooah='open ~/id/work/apphatch/management.xlsx'
+alias ooman='open ~/id/work/apphatch/management.xlsx'
 
 
 # >>>>>> MISC
@@ -68,3 +63,12 @@ alias ooah='open ~/id/work/apphatch/management.xlsx'
 # postgres when it doesn't autostart
 alias pgstart='pg_ctl -D /usr/local/var/postgresql\@9.5/ start'
 alias pgrestart='pg_ctl -D /usr/local/var/postgresql\@9.5/ restart'
+
+# scaffold latex doc in current dir
+function mklatex {
+    info "scaffolding latex directory at $PWD"
+    mkdir $1
+    mkdir $1/images/
+    cp $HOME/id/repos/w-latex/sample-tex-dir/sample-tex-file.tex $1/$1.tex
+    info 'done'
+}
