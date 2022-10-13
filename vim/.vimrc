@@ -16,23 +16,26 @@ call vundle#begin()
 
 Plugin 'gmarik/Vundle.vim'
 Plugin 'junegunn/fzf' "needs FZF installed externally
+Plugin 'junegunn/fzf.vim' "needs FZF installed externally
 Plugin 'ludovicchabant/vim-gutentags'
 Plugin 'preservim/tagbar'
-Plugin 'preservim/nerdcommenter'
-Plugin 'scrooloose/nerdtree'
+
 Plugin 'ervandew/supertab'
-Plugin 'scrooloose/syntastic'
 Plugin 'sheerun/vim-polyglot'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'tpope/vim-fugitive'
 Plugin 'tpope/vim-rails'
 Plugin 'tpope/vim-dispatch'
-Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vimwiki/vimwiki'
 Plugin 'frazrepo/vim-rainbow'
 Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'dense-analysis/ale'
+
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+Plugin 'preservim/nerdcommenter'
+Plugin 'preservim/nerdtree'
+Plugin 'PhilRunninger/nerdtree-visual-selection'
 
 
 " All of your Plugins must be added before the following line
@@ -43,14 +46,25 @@ syntax enable
 let mapleader=","
 
 " NERDTree
+set encoding=utf8
 let NERDTreeShowFiles=1
 let NERDTreeShowHidden=1
 let NERDTreeHighlightCursorline=1
 let NERDTreeIgnore=['\.pyc$','\pycache$']
 let NERDTreeMinimalUI=1
 let NERDTreeDirArrows=1
-autocmd vimenter * NERDTree
+au vimenter * NERDTree
 nnoremap <c-n> :NERDTreeToggle<cr>
+
+" NERDCommenter
+" Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Allow commenting and inverting empty lines
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+" Use compact syntax for prettified multi-line comments
+let g:NERDCompactSexyComs = 1
 
 " ALE
 let g:ale_lint_delay = 500
@@ -68,7 +82,7 @@ nnoremap <c-p> :FZF<cr>
 
 " Vim polyglot
 let g:polyglot_disabled = ['autoindent']
-autocmd BufEnter * set indentexpr=
+au BufEnter * set indentexpr=
 
 " Vimwiki
 let g:vimwiki_list = [{'path': '~/id/repos/.vimwiki/',
@@ -82,24 +96,30 @@ let g:vimwiki_list = [{'path': '~/id/repos/.vimwiki/',
         \ }
       \ }]
 let g:vimwiki_listsyms = ' =<✗✓'
-cnoremap wbl VimwikiBacklinks<cr>
 
 " Vim Rainbow
 " enable for all filetypes except vimwiki (interferes with link hiding
 " feature)
 " adapted from https://stackoverflow.com/questions/6496778/vim-run-autocmd-on-all-filetypes-except
-autocmd FileType * if index(['vimwiki'], &ft) < 0 | call rainbow#load() | endif
+au FileType * if index(['vimwiki'], &ft) < 0 | call rainbow#load() | endif
 
 
 " ///////////////////////////////////////////////////////
 " VIM //////////////////////////////////////////////////
+
+function! SetTextWidthAndHi (width)
+  execute ':set textwidth=' . a:width
+  if exists('&colorcolumn')
+    execute ':set colorcolumn=' . a:width
+  endif
+endfunction
 
 set splitright backspace=2 regexpengine=1
 set noswapfile nobackup nowritebackup
 set visualbell noerrorbells
 set ttyfast lazyredraw
 " match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
-autocmd CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
+au CursorHold,CursorHoldI * if mode() != 'c' | checktime | endif
 
 set t_Co=256 background=dark
 " make sure to set tty emulator color to match
@@ -113,17 +133,20 @@ set wildmenu wildmode=longest:full,full
 set list listchars=nbsp:_,trail:.
 
 set wrap linebreak
-set expandtab shiftwidth=2 tabstop=2 softtabstop=2 textwidth=72
+set expandtab shiftwidth=2 tabstop=2 softtabstop=2
 set autoindent copyindent shiftround
 set hlsearch incsearch smartcase ignorecase showmatch
 set foldmethod=indent foldlevel=99 foldcolumn=3
 set iskeyword+=-,_
+call SetTextWidthAndHi(72)
 
-augroup filetypes
-  autocmd!
-  autocmd FileType python,sh setlocal shiftwidth=4 tabstop=4 softtabstop=4 textwidth=79 fileformat=unix
-  autocmd BufWritePost *.tex ! pdflatex --interaction=nonstopmode <afile>
-augroup END
+augroup Filetypes
+  au!
+  au FileType ruby set iskeyword+=!
+  au FileType python,sh setlocal shiftwidth=4 tabstop=4 softtabstop=4 fileformat=unix
+  au FileType python,sh :call SetTextWidthAndHi(79)
+  au BufWritePost *.tex ! pdflatex --interaction=nonstopmode <afile>
+augroup end
 
 noremap ; :
 nnoremap <tab> :ls<cr>:b

@@ -2,7 +2,51 @@
 # email: k.nguyen.an.hoa<at>gmail.com
 # description: this contains helpers for ruby/rails related projects
 
+alias be='bundle exec'
 alias ber='bundle exec rake'
+alias rlc='bundle exec rails console'
+alias rlg='bundle exec rails generate'
+alias log='tail -f log/development'
+function spec {
+    case $1 in
+        'unit')
+            bundle exec rake spec:unit;
+            ;;
+        'file')
+            if [[ ! -z $2 ]]; then
+                SPEC_FILE=$2
+            else
+                SPEC_FILE=$(find spec -print | fzf);
+            fi
+
+            if [[ ! -z $SPEC_FILE ]]; then
+                info "running spec for file $SPEC_FILE"
+                bundle exec rspec $SPEC_FILE;
+            fi
+            ;;
+        'dir')
+            if [[ ! -z $2 ]]; then
+                SPEC_FILE=$2
+            else
+                SPEC_FILE=$(find spec -type d -print | fzf);
+            fi
+
+            if [[ ! -z $SPEC_FILE ]]; then
+                info "running spec for dir $SPEC_FILE"
+                bundle exec rspec $SPEC_FILE;
+            fi
+            ;;
+        *)
+            if [[ ! -z $SPEC_FILE ]]; then
+                info "rerunning spec for $SPEC_FILE"
+                bundle exec rspec $SPEC_FILE;
+            else
+                error "run 'spec file' or 'spec dir' first"
+            fi
+            ;;
+    esac
+}
+
 function dbm {
     info "Migrate development";
     RAILS_ENV=development bundle exec rake db:migrate;

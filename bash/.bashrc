@@ -35,7 +35,6 @@ done
 
 
 
-
 OS="linux"
 ENV_DIR=".env.linux"
 if [[ $(uname | grep -i darwin) ]]; then
@@ -45,6 +44,7 @@ fi
 
 info "Init .bashrc ($OS)"
 
+EDITOR=vim
 DEFAULT_PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
@@ -68,7 +68,7 @@ function test_and_source {
         source "${HOME}/$ENV_DIR/$1";
         return 0;
     fi
-    [[ -e "$HOME/$1" ]] && source "$HOME/$1" && return 0;
+    [[ -e "${HOME}/$1" ]] && source "${HOME}/$1" && return 0;
     warn "$1 not found";
 }
 

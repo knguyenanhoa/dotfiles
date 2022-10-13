@@ -15,7 +15,7 @@ function cd { # override builtin cd
     fi
 }
 
-function ff {
+function ff { # find something using ag
     ag $1 $2 | fzf;
 }
 
