@@ -35,7 +35,7 @@ function mscp { # my scp
             if (( "$#" )); then # move multiple files
                 while (( "$#" )); do
                     FILEPATH=$1
-                    sudo scp -r -P 22 -i ~/.ssh/${!KEY}.pem $FILEPATH ubuntu@${!IP}:~/uploads/
+                    scp -r -P 22 -i ~/.ssh/${!KEY}.pem $FILEPATH ubuntu@${!IP}:~/uploads/
                     shift;
                 done
             fi
@@ -70,7 +70,7 @@ function mssh { # my ssh
                 error "no key for specified box";
                 return 0;
             fi
-            sudo ssh -A ubuntu@${!IP} -p 22 -i ~/.ssh/${!KEY}.pem
+            ssh -A ubuntu@${!IP} -p 22 -i ~/.ssh/${!KEY}.pem
             ;;
 
         md)
@@ -138,13 +138,13 @@ function maws { # my aws cli
                     case $BOX in
                         arthome_app_osa2_webportal)
                             ggosa2w;
-                            aws s3 sync build/ s3://arthome-app-osa2-webportal-v3 \
+                            aws s3 sync build/ s3://osa2app.link \
                                 --acl public-read --profile ${!PROFILE};
                             ;;
 
-                        ez-spreadsheet-webportal)
-                            ggezw;
-                            aws s3 sync out/ s3://ez-spreadsheet-webportal \
+                        project_maker_web)
+                            ggpmw;
+                            aws s3 sync out/ s3://loja.vn \
                                 --acl public-read --profile ${!PROFILE};
                             ;;
 

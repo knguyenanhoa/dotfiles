@@ -19,6 +19,16 @@ def ws
   return w
 end
 
+def wjc(job_card_name)
+  w = ws
+  w.update job_card_template: job_card_name
+end
+
+def winv(invoice_name)
+  w = ws
+  w.update invoice_template: invoice_name
+end
+
 def pbcopy content
   `echo "#{content}" | pbcopy`
   puts 'copied to clipboard'

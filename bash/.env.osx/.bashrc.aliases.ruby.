@@ -6,7 +6,7 @@ alias be='bundle exec'
 alias ber='bundle exec rake'
 alias rlc='bundle exec rails console'
 alias rlg='bundle exec rails generate'
-alias log='tail -f log/development'
+alias log='tail -f log/development.log'
 function spec {
     case $1 in
         'unit')
@@ -52,6 +52,12 @@ function dbm {
     RAILS_ENV=development bundle exec rake db:migrate;
     info "Migrate test";
     RAILS_ENV=test bundle exec rake db:migrate;
+}
+function redbm {
+    info "Remigrate development";
+    RAILS_ENV=development bundle exec rake db:drop db:create db:migrate db:seed;
+    info "Remigrate test";
+    RAILS_ENV=test bundle exec rake db:drop db:create db:migrate;
 }
 function cov {
     if [[ ! -e 'coverage/index.html' ]]; then
@@ -108,6 +114,13 @@ alias ggosa2rs='cd ~/WORKREPO/arthome-app-osa2-reporting-service'
 alias ggosa2m='cd ~/WORKREPO/arthome-app-osa2-mobile'
 alias ggosa2w='cd ~/WORKREPO/arthome-app-osa2-webportal'
 
-# ez spreadsheet
-alias ggez='cd ~/WORKREPO/ez-spreadsheet-backend'
-alias ggezw='cd ~/WORKREPO/ez-spreadsheet-webportal'
+# babybook
+alias ggbb='cd ~/WORKREPO/babybook-backend'
+alias ggbbm='cd ~/WORKREPO/babybook-mobile'
+
+# project maker
+alias ggpm='cd ~/WORKREPO/project-maker'
+alias ggpmw='cd ~/WORKREPO/project-maker-web'
+
+# myholidayminder
+alias ggmhm='cd ~/WORKREPO/my-holiday-minder'

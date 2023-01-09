@@ -2,9 +2,13 @@
 # email: k.nguyen.an.hoa<at>gmail.com
 
 
-# >>>>>> GENERAL
-# general aliases
+# {{{ GENERAL
 
+# git ops in dotfile dir
+alias dotfiles="git -C $HOME/.dotfiles/"
+
+# general aliases
+alias vi='vim'
 alias la='ls -lhaFGS'
 alias tag='ctags -R .'
 alias p3='python3'
@@ -24,7 +28,8 @@ function tmk { tmux kill-session -t $1; }
 # git
 alias gs='git status'
 __git_complete gs _git_status
-alias gl='tig --all'
+alias gl='git log --graph --oneline --all'
+alias gll='tig --all'
 __git_complete gl _git_log
 alias gad='git add'
 alias gbr='git branch'
@@ -32,43 +37,43 @@ __git_complete gbr _git_branch
 alias gcm='git commit'
 alias gck='git checkout'
 __git_complete gck _git_checkout
-##### reduces clashes and merges
+# reduces clashes and merges
+alias gf='git fetch'
 alias gpl='git add .; git stash; git pull;'
 alias gps='git push'
 alias gst='git stash'
 __git_complete gst _git_stash
 alias gmr='git merge'
+alias grb='git rebase'
 __git_complete gmr _git_merge
 alias gdf='git difftool'
 __git_complete gdf _git_difftool
 alias grs='git reset'
 alias pop='git stash pop'
 
+# }}}
 
-# >>>>>> NAV
-# nav aliases should prefix with gg → less likely to clash with git aliases
-# nav aliases that directly open files should start with oo → less likely to clash
-# scaffolding aliases should start with mk (it is making something)
+# {{{ NAV
+# navigation aliases ⇒ prefix gg
+# file aliases ⇒ prefix oo
 
-# other
+# nav
 alias geek='cat ~/id/repos/code.geek'
+alias ggwork='cd ~/WORKREPO/'
 alias ggwiki='cd ~/id/repos/.vimwiki/; vi index.wiki'
 alias ggmlai='cd ~/id/repos/l-mlai/'
 alias ggblog='cd ~/id/repos/w-blog/; vi'
 
 # file shortcuts
-alias ooas='open ~/id/assets/finances/assets-summary.xlsx'
-alias ooman='open ~/id/work/apphatch/management.xlsx'
+alias ooman='open ~/id/assets/finances/assets-summary.xlsx'
+alias oomanah='open ~/id/work/apphatch/management.xlsx'
+# }}}
 
-
-# >>>>>> MISC
-# misc scripts
-
-# postgres when it doesn't autostart
-alias pgstart='pg_ctl -D /usr/local/var/postgresql\@9.5/ start'
-alias pgrestart='pg_ctl -D /usr/local/var/postgresql\@9.5/ restart'
+# {{{ MISC
+# scaffolding aliases ⇒ prefix mk
 
 # scaffold latex doc in current dir
+# TODO: ask for confirm?
 function mklatex {
     info "scaffolding latex directory at $PWD"
     mkdir $1
@@ -76,3 +81,4 @@ function mklatex {
     cp $HOME/id/repos/w-latex/sample-tex-dir/sample-tex-file.tex $1/$1.tex
     info 'done'
 }
+# }}}
