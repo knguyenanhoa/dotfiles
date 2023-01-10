@@ -11,6 +11,7 @@ echo "[INFO] Symlinking $OS"
 
 mkdir -p ${HOME}/$ENV_DIR
 echo "- manually create .bashrc.local as required"
+ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.iterm2config ${HOME}/$ENV_DIR/.bashrc.iterm2config
 ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases ${HOME}/$ENV_DIR/.bashrc.aliases
 ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases.extended ${HOME}/$ENV_DIR/.bashrc.aliases.extended
 ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.aliases.ruby. ${HOME}/$ENV_DIR/.bashrc.aliases.ruby.
@@ -20,6 +21,7 @@ ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.prompt ${HOME}/$ENV_DIR/.bashrc.p
 ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.borgbackup ${HOME}/$ENV_DIR/.bashrc.borgbackup
 ln -sh ${HOME}/.dotfiles/bash/$ENV_DIR/.bashrc.remoteservices ${HOME}/$ENV_DIR/.bashrc.remoteservices
 ln -sh ${HOME}/.dotfiles/bash/.bashrc ${HOME}/.bashrc
+ln -sh ${HOME}/.dotfiles/bash/.bashrc.helpers ${HOME}/.bashrc.helpers
 
 ln -sh ${HOME}/.dotfiles/alacritty/.alacritty.yml ${HOME}/.alacritty.yml
 

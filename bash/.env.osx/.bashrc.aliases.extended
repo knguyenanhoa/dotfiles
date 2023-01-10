@@ -1,5 +1,10 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
+#
+# navigation aliases ⇒ prefix gg
+# file aliases ⇒ prefix oo
+# scaffolding aliases ⇒ prefix mk
+
 
 function cd { # override builtin cd
     # auto activate python venv

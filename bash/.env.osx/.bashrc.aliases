@@ -1,11 +1,16 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
+#
+# navigation aliases ⇒ prefix gg
+# file aliases ⇒ prefix oo
+# scaffolding aliases ⇒ prefix mk
 
 
 # {{{ GENERAL
 
 # git ops in dotfile dir
 alias dotfiles="git -C $HOME/.dotfiles/"
+alias oodotfiles="cd $HOME/.dotfiles; vi"
 
 # general aliases
 alias vi='vim'
@@ -55,9 +60,8 @@ alias pop='git stash pop'
 
 # }}}
 
+
 # {{{ NAV
-# navigation aliases ⇒ prefix gg
-# file aliases ⇒ prefix oo
 
 # nav
 alias geek='cat ~/id/repos/code.geek'
@@ -71,8 +75,8 @@ alias ooman='open ~/id/assets/finances/assets-summary.xlsx'
 alias oomanah='open ~/id/work/apphatch/management.xlsx'
 # }}}
 
+
 # {{{ MISC
-# scaffolding aliases ⇒ prefix mk
 
 # scaffold latex doc in current dir
 # TODO: ask for confirm?

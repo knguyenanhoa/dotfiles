@@ -1,51 +1,18 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 # description: this contains helpers for ruby/rails related projects
+#
+# navigation aliases ⇒ prefix gg
+# file aliases ⇒ prefix oo
+# scaffolding aliases ⇒ prefix mk
 
+
+# {{{ GENERAL
 alias be='bundle exec'
 alias ber='bundle exec rake'
 alias rlc='bundle exec rails console'
 alias rlg='bundle exec rails generate'
 alias log='tail -f log/development.log'
-function spec {
-    case $1 in
-        'unit')
-            bundle exec rake spec:unit;
-            ;;
-        'file')
-            if [[ ! -z $2 ]]; then
-                SPEC_FILE=$2
-            else
-                SPEC_FILE=$(find spec -print | fzf);
-            fi
-
-            if [[ ! -z $SPEC_FILE ]]; then
-                info "running spec for file $SPEC_FILE"
-                bundle exec rspec $SPEC_FILE;
-            fi
-            ;;
-        'dir')
-            if [[ ! -z $2 ]]; then
-                SPEC_FILE=$2
-            else
-                SPEC_FILE=$(find spec -type d -print | fzf);
-            fi
-
-            if [[ ! -z $SPEC_FILE ]]; then
-                info "running spec for dir $SPEC_FILE"
-                bundle exec rspec $SPEC_FILE;
-            fi
-            ;;
-        *)
-            if [[ ! -z $SPEC_FILE ]]; then
-                info "rerunning spec for $SPEC_FILE"
-                bundle exec rspec $SPEC_FILE;
-            else
-                error "run 'spec file' or 'spec dir' first"
-            fi
-            ;;
-    esac
-}
 
 function dbm {
     info "Migrate development";
@@ -53,12 +20,14 @@ function dbm {
     info "Migrate test";
     RAILS_ENV=test bundle exec rake db:migrate;
 }
+
 function redbm {
     info "Remigrate development";
     RAILS_ENV=development bundle exec rake db:drop db:create db:migrate db:seed;
     info "Remigrate test";
     RAILS_ENV=test bundle exec rake db:drop db:create db:migrate;
 }
+
 function cov {
     if [[ ! -e 'coverage/index.html' ]]; then
         error "no coverage file present";
@@ -74,6 +43,7 @@ function mdstart {
         bundle exec unicorn -c config/unicorn.conf > /dev/null 2>&1;
     ) & echo $! > $HOME/md.pid;
 }
+
 function mdstop {
     sudo kill -QUIT $(cat $HOME/md.pid) && rm $HOME/md.pid;
 }
@@ -81,6 +51,7 @@ function mdstop {
 function redisstart {
     ( redis-server > /dev/null 2>&1 ) & echo $! > $HOME/redis.pid;
 }
+
 function redisstop {
     sudo kill -9 $(cat $HOME/redis.pid) && rm $HOME/redis.pid;
 }
@@ -89,14 +60,13 @@ function resquestart {
     QUEUES=customer_balances,supplier_balances,customer_statements,export,booking_reminder,follow_ups,accountings,marketings,email,customer_communications,solr;
     ( QUEUE=$QUEUES rake resque:work > /dev/null 2>&1 ) & echo $! > $HOME/resque.pid;
 }
+
 function resquestop {
     sudo kill -9 $(cat $HOME/resque.pid) && rm $HOME/resque.pid; unset QUEUES;
 }
 
 
-# >>>>>> NAV
-# nav aliases should prefix with gg → less likely to clash with git aliases
-# nav aliases that directly open files should start with oo → less likely to clash
+# {{{ NAV
 
 # md
 alias ggmd='cd /Volumes/untitled/mechanicdesk/mechanicdesk/'
@@ -124,3 +94,5 @@ alias ggpmw='cd ~/WORKREPO/project-maker-web'
 
 # myholidayminder
 alias ggmhm='cd ~/WORKREPO/my-holiday-minder'
+
+# }}}

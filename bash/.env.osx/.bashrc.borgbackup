@@ -1,7 +1,9 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
+#
 # script to create borg archives
 # currently not working (borg version clash)
+
 
 function _backup_external_drive {
     BACKUP_DIR="/Volumes/$1/$1.backup"

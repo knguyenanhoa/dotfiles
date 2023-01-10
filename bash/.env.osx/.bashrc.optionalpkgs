@@ -1,27 +1,6 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 
-function installpkg {
-    # takes 3 args:
-    # 1. pkg name for install
-    # 2. arbitrary text
-    # 3. pkg name for which command
-    PKG=$1
-    [[ $3 ]] && PKG=$3
-    if [[ -z $(which $PKG) ]]; then
-        {
-            [[ $VERBOSE ]] && info "Installing $2 → $1";
-            if [[ $(uname | grep -i darwin) ]]; then
-                HOMEBREW_NO_AUTO_UPDATE=1 brew install $1;
-            else
-                sudo apt-get -y install $1;
-            fi
-        } || { [[ $VERBOSE ]] && error "$1"; }
-    else
-        [[ $VERBOSE ]] && info "Using $1"
-    fi
-    unset PKG
-}
 
 [[ $VERBOSE && $INSTALL_OPTIONAL ]] && info "Checking optional pkgs"
 
@@ -31,10 +10,13 @@ function installpkg {
 [[ $INSTALL_OPTIONAL ]] && installpkg tldr "man";
 [[ $INSTALL_OPTIONAL ]] && installpkg howdoi "man";
 [[ $INSTALL_OPTIONAL ]] && installpkg borgbackup "backup";
+[[ $INSTALL_OPTIONAL ]] && installpkg fpp "facebook path picker";
+[[ $INSTALL_OPTIONAL ]] && installpkg htop "ps";
+[[ $INSTALL_OPTIONAL ]] && installpkg tig "git log";
+
 
 [[ $INSTALL_OPTIONAL ]] && installpkg fzf "find, locate";
-if [[ -s $(which fzf) ]]; then
-    # setup fzf
+if [[ -s $(which fzf) ]]; then # setup fzf
     if [[ ! "$PATH" == */usr/local/opt/fzf/bin* ]]; then
         export PATH="${PATH:+${PATH}:}/usr/local/opt/fzf/bin"
     fi
@@ -49,9 +31,6 @@ if [[ -s $(which fzf) ]]; then
     export FZF_COMPLETION_OPTS=$FZF_OPTIONS
 fi
 
-[[ $INSTALL_OPTIONAL ]] && installpkg fpp "facebook path picker";
-[[ $INSTALL_OPTIONAL ]] && installpkg htop "ps";
-[[ $INSTALL_OPTIONAL ]] && installpkg tig "git log";
 
 if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which espanso) ]]; then
     {
@@ -68,6 +47,7 @@ else
     [[ $VERBOSE ]] && info "Using espanso"
 fi
 
+
 if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which aws) ]]; then
     {
         [[ $VERBOSE ]] && info "Installing aws cli v2";
@@ -81,6 +61,7 @@ else
     [[ $VERBOSE ]] && info "Using aws cli v2"
 fi
 
+
 if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which b2) ]]; then
     {
         [[ $VERBOSE ]] && info "Installing b2 cli (backblaze)";
@@ -91,5 +72,6 @@ if [[ $INSTALL_OPTIONAL ]] && [[ -z $(which b2) ]]; then
 else
     [[ $VERBOSE ]] && info "Using b2 cli (backblaze)"
 fi
+
 
 [[ $VERBOSE ]] && info 'Done'

@@ -1,6 +1,7 @@
 # author: 191101
 # email: k.nguyen.an.hoa<at>gmail.com
 
+
 export DEFAULTPS1=$PS1
 GITSTATUS=""
 

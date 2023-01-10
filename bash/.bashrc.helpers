@@ -1,0 +1,47 @@
+# author: 191101
+# email: k.nguyen.an.hoa<at>gmail.com
+
+
+# for printing
+export NOCOLOR="\e[m"
+export RED="\033[31m"
+export GREEN="\033[32m"
+export BLUE="\033[34m"
+export CYAN="\033[36m"
+export YELLOW="\033[33m"
+
+info() { printf "${GREEN}%s${NOCOLOR} %s %s\n" "[INFO]" "$(date +%H:%M) --" "$*" >&2; }
+warn() { printf "${YELLOW}%s${NOCOLOR} %s %s\n" "[WARN]" "$(date +%H:%M) --" "$*" >&2; }
+error() { printf "${RED}%s${NOCOLOR} %s %s\n" "[ERROR]" "$(date +%H:%M) --" "$*" >&2; }
+
+
+function test_and_source {
+    if [[ -e "${HOME}/$ENV_DIR/$1" ]]; then
+        source "${HOME}/$ENV_DIR/$1";
+        return 0;
+    fi
+    [[ -e "${HOME}/$1" ]] && source "${HOME}/$1" && return 0;
+    warn "$1 not found";
+}
+
+function installpkg {
+    # takes 3 args:
+    #   $1 = pkg name for pkg manager (brew, apt, ...) install
+    #   $2 = arbitrary text
+    #   $3 = pkg name for 'which' command
+    PKG=$1
+    [[ $3 ]] && PKG=$3
+    if [[ -z $(which $PKG) ]]; then
+        {
+            [[ $VERBOSE ]] && info "Installing $2 → $1"
+            if [[ $(uname | grep -i darwin) ]]; then
+                HOMEBREW_NO_AUTO_UPDATE=1 brew install $1;
+            else
+                sudo apt-get -y install $1;
+            fi
+        } || { [[ $VERBOSE ]] && error "$1"; }
+    else
+        [[ $VERBOSE ]] && info "Using $1"
+    fi
+    unset PKG
+}
