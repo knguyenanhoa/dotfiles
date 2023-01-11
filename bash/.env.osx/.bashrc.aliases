@@ -20,10 +20,10 @@ alias p3='python3'
 alias lisp='sbcl'
 alias rs='Rscript'
 alias df='df -h'
-alias push_dotfiles="sudo cp -r $HOME/.dotfiles $HOME/id/repos/"
-alias pull_dotfiles="sudo cp -r $HOME/id/repos/.dotfiles $HOME/"
-alias push_creds="sudo cp -r $HOME/.creds $HOME/id/repos/"
-alias pull_creds="sudo cp -r $HOME/id/repos/.creds $HOME/"
+alias push_dotfiles="cp -r $HOME/.dotfiles $HOME/id/repos/"
+alias pull_dotfiles="cp -r $HOME/id/repos/.dotfiles $HOME/"
+alias push_creds="cp -r $HOME/.creds $HOME/id/repos/"
+alias pull_creds="cp -r $HOME/id/repos/.creds $HOME/"
 
 # tmux
 alias tm='tmux'
